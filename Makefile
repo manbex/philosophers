@@ -2,12 +2,12 @@ NAME = philo
 
 SRC_DIR = srcs/
 
-SRC = main.c ft_superatoi.c
+SRC = main.c init.c philo.c ft_superatoi.c utils.c
 
 OBJ = $(addprefix $(SRC_DIR), $(SRC:.c=.o))
 
 CC = cc
-CFLAGS = -Iincludes
+CFLAGS = -Iincludes -pthread
 RM = rm -f
 
 $(NAME): $(OBJ)

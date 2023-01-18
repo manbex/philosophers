@@ -12,30 +12,55 @@
 
 #include "philo.h"
 
-int	init(t_vars *v, char **argv, int argc)
+void	check(t_philo *p, t_vars *v)
 {
-	v->nb_eat = 0;
-	if (ft_superatoi(argv[1], &v->philos)
-		|| ft_superatoi(argv[2], &v->die)
-		|| ft_superatoi(argv[3], &v->eat)
-		|| ft_superatoi(argv[4], &v->sleep)
-		|| (argc == 6 && ft_superatoi(argv[5], &v->nb_eat)))
-		return (1);
-	return (0);
+	int				i;
+	int				full;
+	struct timeval	t;
+
+	while (v->ok)
+	{
+		i = 0;
+		full = 0;
+		while (i < v->philos)
+		{
+			gettimeofday(&t, NULL);
+			if (p[i].last_meal.tv_sec && get_delay(p[i].last_meal, t) > v->die)
+			{
+				pthread_mutex_lock(&v->lock);
+				v->ok = 0;
+				printf("%d %d died\n", get_delay(v->t, t), p[i].nb);
+				pthread_mutex_unlock(&v->lock);
+				break ;
+			}
+			if (v->nb_eat > 0 && p[i].eaten >= v->nb_eat)
+				full++;
+			i++;
+		}
+		if (full == i)
+			v->ok = 0;
+	}
 }
 
 int	main(int argc, char **argv)
 {
+	t_philo	*p;
 	t_vars	v;
 
 	if (argc == 5 || argc == 6)
 	{
-		if (init(&v, argv, argc))
+		if (init(&p, &v, argv, argc))
 			return (write(1, "Error\n", 6), 1);
+		gettimeofday(&v.t, NULL);
+		v.start = 1;
+		check(p, &v);
+		join_threads(p, v.philos);
+		pthread_mutex_destroy(&v.lock);
+		free(p);
 		return (0);
 	}
 	return (write(1, "Usage: number_of_philosophers "
-				"time_to_die time_to_eat time_to_sleep "
-				"[number_of_times_each_philosopher_must_eat]\n"
-				, 112), 1);
+			"time_to_die time_to_eat time_to_sleep "
+			"[number_of_times_each_philosopher_must_eat]\n"
+			, 112), 1);
 }
