@@ -26,7 +26,7 @@ void	take_forks(t_philo *p)
 
 void	act(t_philo *p, int act)
 {
-	if (p->v->ok == 1)
+	if (value(&p->v->lock_ok, &p->v->ok))
 	{
 		if (act == THINK)
 			print_output(p, "is thinking");
@@ -37,10 +37,14 @@ void	act(t_philo *p, int act)
 		}
 		else
 		{
+			pthread_mutex_lock(&p->lock);
 			gettimeofday(&p->last_meal, NULL);
+			pthread_mutex_unlock(&p->lock);
 			print_output(p, "is eating");
 			usleep(p->v->eat * 1000);
+			pthread_mutex_lock(&p->lock);
 			p->eaten++;
+			pthread_mutex_unlock(&p->lock);
 		}
 	}
 }
@@ -50,16 +54,18 @@ void	*thread(void *philo)
 	t_philo	*p;
 
 	p = (t_philo *)philo;
-	while (p->v->start == 0)
-		if (p->v->error)
+	while (value(&p->v->lock_ok, &p->v->start) == 0)
+		if (value(&p->v->lock_ok, &p->v->error))
 			return (0);
+	pthread_mutex_lock(&p->lock);
 	gettimeofday(&p->last_meal, NULL);
+	pthread_mutex_unlock(&p->lock);
 	if (p->nb % 2 == 0)
 	{
 		act(p, THINK);
 		usleep(p->v->eat * 1000);
 	}
-	while (p->v->ok)
+	while (value(&p->v->lock_ok, &p->v->ok))
 	{
 		take_forks(p);
 		act(p, EAT);

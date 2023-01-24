@@ -17,6 +17,7 @@ void	join_threads(t_philo *p, int i)
 	{
 		pthread_join(p[j].tid, NULL);
 		pthread_mutex_destroy(&(p[j].fork_left));
+		pthread_mutex_destroy(&(p[j].lock));
 		j++;
 	}
 }
@@ -26,8 +27,25 @@ void	print_output(t_philo *p, char *str)
 	struct timeval	t;
 
 	gettimeofday(&t, NULL);
-	pthread_mutex_lock(&p->v->lock);
-	if (p->v->ok)
+	pthread_mutex_lock(&p->v->lock_print);
+	if (value(&p->v->lock_ok, &p->v->ok))
 		printf("%d %d %s\n", get_delay(p->v->t, t), p->nb, str);
-	pthread_mutex_unlock(&p->v->lock);
+	pthread_mutex_unlock(&p->v->lock_print);
+}
+
+int	value(pthread_mutex_t *lock, int *value)
+{
+	int	tmp;
+
+	pthread_mutex_lock(lock);
+	tmp = *value;
+	pthread_mutex_unlock(lock);
+	return (tmp);
+}
+
+void	setval(pthread_mutex_t *lock, int *res, int value)
+{
+	pthread_mutex_lock(lock);
+	*res = value;
+	pthread_mutex_unlock(lock);
 }

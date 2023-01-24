@@ -18,27 +18,28 @@ void	check(t_philo *p, t_vars *v)
 	int				full;
 	struct timeval	t;
 
-	while (v->ok)
+	while (value(&v->lock_ok, &v->ok))
 	{
 		i = 0;
 		full = 0;
 		while (i < v->philos)
 		{
 			gettimeofday(&t, NULL);
+			pthread_mutex_lock(&p[i].lock);
 			if (p[i].last_meal.tv_sec && get_delay(p[i].last_meal, t) > v->die)
 			{
-				pthread_mutex_lock(&v->lock);
-				v->ok = 0;
-				printf("%d %d died\n", get_delay(v->t, t), p[i].nb);
-				pthread_mutex_unlock(&v->lock);
+				print_output(&p[i], "died");
+				pthread_mutex_unlock(&p[i].lock);
+				setval(&v->lock_ok, &v->ok, 0);
 				break ;
 			}
-			if (v->nb_eat > 0 && p[i].eaten >= v->nb_eat)
+			pthread_mutex_unlock(&p[i].lock);
+			if (v->nb_eat >= 0 && value(&p[i].lock, &p[i].eaten) >= v->nb_eat)
 				full++;
 			i++;
 		}
 		if (full == i)
-			v->ok = 0;
+			setval(&v->lock_ok, &v->ok, 0);
 	}
 }
 
@@ -52,10 +53,11 @@ int	main(int argc, char **argv)
 		if (init(&p, &v, argv, argc))
 			return (write(1, "Error\n", 6), 1);
 		gettimeofday(&v.t, NULL);
-		v.start = 1;
+		setval(&v.lock_ok, &v.start, 1);
 		check(p, &v);
 		join_threads(p, v.philos);
-		pthread_mutex_destroy(&v.lock);
+		pthread_mutex_destroy(&v.lock_print);
+		pthread_mutex_destroy(&v.lock_ok);
 		free(p);
 		return (0);
 	}

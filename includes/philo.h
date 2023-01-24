@@ -36,7 +36,8 @@ typedef struct s_vars
 	int				start;
 	int				error;
 	struct timeval	t;
-	pthread_mutex_t	lock;
+	pthread_mutex_t	lock_print;
+	pthread_mutex_t	lock_ok;
 }	t_vars;
 
 typedef struct s_philo
@@ -48,6 +49,7 @@ typedef struct s_philo
 	struct timeval	last_meal;
 	pthread_mutex_t	fork_left;
 	pthread_mutex_t	*fork_right;
+	pthread_mutex_t	lock;
 }	t_philo;
 
 int		ft_superatoi(char *nptr, int *res);
@@ -56,5 +58,7 @@ void	join_threads(t_philo *p, int i);
 void	*thread(void *philo);
 void	print_output(t_philo *p, char *str);
 int		init(t_philo **p, t_vars *v, char **argv, int argc);
+int		value(pthread_mutex_t *lock, int *value);
+void	setval(pthread_mutex_t *lock, int *res, int value);
 
 #endif
