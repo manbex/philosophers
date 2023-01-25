@@ -12,11 +12,27 @@
 
 #include "philo.h"
 
+int	check_death(t_philo *p, t_vars *v)
+{
+	struct timeval	t;
+
+	gettimeofday(&t, NULL);
+	pthread_mutex_lock(&p->lock);
+	if (p->last_meal.tv_sec && get_delay(p->last_meal, t) > v->die)
+	{
+		print_output(p, "died");
+		pthread_mutex_unlock(&p->lock);
+		setval(&v->lock_ok, &v->ok, 0);
+		return (1);
+	}
+	pthread_mutex_unlock(&p->lock);
+	return (0);
+}
+
 void	check(t_philo *p, t_vars *v)
 {
 	int				i;
 	int				full;
-	struct timeval	t;
 
 	while (value(&v->lock_ok, &v->ok))
 	{
@@ -24,16 +40,8 @@ void	check(t_philo *p, t_vars *v)
 		full = 0;
 		while (i < v->philos)
 		{
-			gettimeofday(&t, NULL);
-			pthread_mutex_lock(&p[i].lock);
-			if (p[i].last_meal.tv_sec && get_delay(p[i].last_meal, t) > v->die)
-			{
-				print_output(&p[i], "died");
-				pthread_mutex_unlock(&p[i].lock);
-				setval(&v->lock_ok, &v->ok, 0);
+			if (check_death(&p[i], v))
 				break ;
-			}
-			pthread_mutex_unlock(&p[i].lock);
 			if (v->nb_eat >= 0 && value(&p[i].lock, &p[i].eaten) >= v->nb_eat)
 				full++;
 			i++;

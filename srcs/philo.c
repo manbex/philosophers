@@ -61,6 +61,12 @@ void	act(t_philo *p, int act)
 	}
 }
 
+void	solo(t_philo *p)
+{
+	print_output(p, "has taken a fork");
+	usleep((p->v->die + 1) * 1000);
+}
+
 void	*thread(void *philo)
 {
 	t_philo	*p;
@@ -74,11 +80,7 @@ void	*thread(void *philo)
 	pthread_mutex_unlock(&p->lock);
 	act(p, THINK);
 	if (p->v->philos == 1)
-	{
-		print_output(p, "has taken a fork");
-		usleep((p->v->die + 1) * 1000);
-		return (0);
-	}
+		return (solo(p), NULL);
 	if (p->nb % 2 == 0)
 		usleep(p->v->eat * 1000);
 	while (value(&p->v->lock_ok, &p->v->ok))
@@ -90,5 +92,5 @@ void	*thread(void *philo)
 		act(p, SLEEP);
 		act(p, THINK);
 	}
-	return (0);
+	return (NULL);
 }
