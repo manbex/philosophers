@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mbenicho <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/25 18:14:08 by mbenicho          #+#    #+#             */
+/*   Updated: 2023/01/25 18:32:38 by mbenicho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	take_forks(t_philo *p)
@@ -60,11 +72,15 @@ void	*thread(void *philo)
 	pthread_mutex_lock(&p->lock);
 	gettimeofday(&p->last_meal, NULL);
 	pthread_mutex_unlock(&p->lock);
-	if (p->nb % 2 == 0)
+	act(p, THINK);
+	if (p->v->philos == 1)
 	{
-		act(p, THINK);
-		usleep(p->v->eat * 1000);
+		print_output(p, "has taken a fork");
+		usleep((p->v->die + 1) * 1000);
+		return (0);
 	}
+	if (p->nb % 2 == 0)
+		usleep(p->v->eat * 1000);
 	while (value(&p->v->lock_ok, &p->v->ok))
 	{
 		take_forks(p);

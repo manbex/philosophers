@@ -8,7 +8,7 @@ int	ft_superatoi(char *nptr, int *res)
 
 	n = 0;
 	sign = 1;
-	if (*nptr == '-')
+	if (*nptr == '-' || *nptr == '\0')
 		return (1);
 	while (*nptr >= '0' && *nptr <= '9')
 	{
