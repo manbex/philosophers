@@ -6,7 +6,7 @@
 /*   By: mbenicho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 18:14:08 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/01/25 18:32:38 by mbenicho         ###   ########.fr       */
+/*   Updated: 2023/04/07 09:32:25 by mbenicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,18 @@
 
 void	take_forks(t_philo *p)
 {
-	struct timeval	t;
-
 	if (p->nb % 2)
 	{
 		pthread_mutex_lock(&p->fork_left);
-		gettimeofday(&t, NULL);
 		print_output(p, "has taken a fork");
 		pthread_mutex_lock(p->fork_right);
-		gettimeofday(&t, NULL);
 		print_output(p, "has taken a fork");
 	}
 	else
 	{
 		pthread_mutex_lock(p->fork_right);
-		gettimeofday(&t, NULL);
 		print_output(p, "has taken a fork");
 		pthread_mutex_lock(&p->fork_left);
-		gettimeofday(&t, NULL);
 		print_output(p, "has taken a fork");
 	}
 }
@@ -74,7 +68,7 @@ void	*thread(void *philo)
 	p = (t_philo *)philo;
 	while (value(&p->v->lock_ok, &p->v->start) == 0)
 		if (value(&p->v->lock_ok, &p->v->error))
-			return (0);
+			return (NULL);
 	pthread_mutex_lock(&p->lock);
 	gettimeofday(&p->last_meal, NULL);
 	pthread_mutex_unlock(&p->lock);

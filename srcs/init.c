@@ -6,7 +6,7 @@
 /*   By: mbenicho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 18:14:05 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/01/25 18:14:07 by mbenicho         ###   ########.fr       */
+/*   Updated: 2023/04/07 09:13:11 by mbenicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	init_philo(t_philo *p, int i, t_vars *v)
 		p[i].fork_right = &(p[i + 1].fork_left);
 	if (pthread_mutex_init(&(p[i].fork_left), NULL))
 		setval(&v->lock_ok, &v->error, 1);
-	if (pthread_mutex_init(&(p[i].lock), NULL))
+	if (!v->error && pthread_mutex_init(&(p[i].lock), NULL))
 	{
 		setval(&v->lock_ok, &v->error, 1);
 		pthread_mutex_destroy(&p[i].fork_left);

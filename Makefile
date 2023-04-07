@@ -1,37 +1,34 @@
-NAME = philo
+NAME	=	philo
 
-SRC_DIR = srcs/
+SRC_DIR	=	srcs/
+SRC		= 	main.c			\
+			init.c			\
+			philo.c			\
+			ft_superatoi.c	\
+			utils.c			\
 
-SRC = main.c init.c philo.c ft_superatoi.c utils.c
+OBJ_DIR	=	obj/
+OBJ		=	$(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
-OBJ = $(addprefix $(SRC_DIR), $(SRC:.c=.o))
+CC		=	cc
+CFLAGS	=	-Iincludes -pthread
+RM		=	rm -f
 
-CC = cc
-CFLAGS = -Iincludes -pthread
-RM = rm -f
+$(OBJ_DIR)%.o:	$(SRC_DIR)%.c
+					@mkdir -p $(@D)
+					$(CC) $(CFLAGS) -c $< -o $@
 
-$(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $@
+$(NAME):		$(OBJ)
+					$(CC) $(CFLAGS) $(OBJ) -o $@
 
-all: $(NAME)
+all:			$(NAME)
 
 clean:
-	$(RM) $(OBJ) test.o
+					$(RM) $(OBJ) test.o
 
-fclean: clean
-	$(RM) $(NAME) test
+fclean:	clean
+					$(RM) $(NAME) test
 
-re: fclean $(NAME)
+re:				fclean $(NAME)
 
-
-
-TEST = test.c
-
-TOBJ = $(TEST:.c=.o)
-
-test: $(TOBJ)
-	$(CC) $(TOBJ) -o test
-
-
-
-.PHONY: all bonus clean fclean re
+.PHONY: 		all bonus clean fclean re
