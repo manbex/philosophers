@@ -11,7 +11,7 @@ OBJ_DIR	=	obj/
 OBJ		=	$(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
 CC		=	cc
-CFLAGS	=	-Iincludes -pthread
+CFLAGS	=	-Iincludes -pthread -Wall -Wextra -Werror
 RM		=	rm -f
 
 $(OBJ_DIR)%.o:	$(SRC_DIR)%.c
