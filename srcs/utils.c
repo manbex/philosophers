@@ -6,7 +6,7 @@
 /*   By: mbenicho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 18:14:11 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/04/14 11:41:58 by mbenicho         ###   ########.fr       */
+/*   Updated: 2023/04/14 17:12:20 by mbenicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@ void	join_threads(t_philo *p, int i)
 	while (j < i)
 	{
 		pthread_join(p[j].tid, NULL);
+		j++;
+	}
+	j = 0;
+	while (j < i)
+	{
 		pthread_mutex_destroy(&(p[j].fork_left));
 		pthread_mutex_destroy(&(p[j].lock));
 		j++;
