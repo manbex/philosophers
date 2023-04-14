@@ -24,7 +24,7 @@ $(NAME):		$(OBJ)
 all:			$(NAME)
 
 clean:
-					$(RM) $(OBJ) test.o
+					$(RM) -r $(OBJ_DIR) test.o
 
 fclean:	clean
 					$(RM) $(NAME) test

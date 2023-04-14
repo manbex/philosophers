@@ -6,7 +6,7 @@
 /*   By: mbenicho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 18:14:08 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/04/07 09:32:25 by mbenicho         ###   ########.fr       */
+/*   Updated: 2023/04/14 11:34:19 by mbenicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,11 @@ void	act(t_philo *p, int act)
 	if (value(&p->v->lock_ok, &p->v->ok))
 	{
 		if (act == THINK)
+		{
 			print_output(p, "is thinking");
+			if (p->v->philos % 2)
+				usleep((p->v->sleep + p->v->eat) / 2 * 1000);
+		}
 		else if (act == SLEEP)
 		{
 			print_output(p, "is sleeping");
@@ -57,8 +61,10 @@ void	act(t_philo *p, int act)
 
 void	solo(t_philo *p)
 {
+	pthread_mutex_lock(&p->fork_left);
 	print_output(p, "has taken a fork");
 	usleep((p->v->die + 1) * 1000);
+	pthread_mutex_unlock(&p->fork_left);
 }
 
 void	*thread(void *philo)
@@ -72,10 +78,10 @@ void	*thread(void *philo)
 	pthread_mutex_lock(&p->lock);
 	gettimeofday(&p->last_meal, NULL);
 	pthread_mutex_unlock(&p->lock);
-	act(p, THINK);
+	print_output(p, "is thinking");
 	if (p->v->philos == 1)
 		return (solo(p), NULL);
-	if (p->nb % 2 == 0)
+	if (p->v->philos % 2 == 0 && p->nb % 2 == 0)
 		usleep(p->v->eat * 1000);
 	while (value(&p->v->lock_ok, &p->v->ok))
 	{

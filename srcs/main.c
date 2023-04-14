@@ -6,7 +6,7 @@
 /*   By: mbenicho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 14:44:46 by mbenicho          #+#    #+#             */
-/*   Updated: 2023/04/07 09:54:59 by mbenicho         ###   ########.fr       */
+/*   Updated: 2023/04/14 11:26:37 by mbenicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	check_death(t_philo *p, t_vars *v)
 
 	gettimeofday(&t, NULL);
 	pthread_mutex_lock(&p->lock);
-	if (p->last_meal.tv_sec && get_delay(p->last_meal, t) >= v->die)
+	if (p->last_meal.tv_sec && get_delay(p->last_meal, t) > v->die)
 	{
 		print_output(p, "died");
 		pthread_mutex_unlock(&p->lock);
