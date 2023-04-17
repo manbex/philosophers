@@ -1,20 +1,25 @@
 NAME	=	philo
 
+INC_DIR	=	includes/
+INC		=	$(addprefix $(INC_DIR),	\
+			philo.h					\
+			)
+
 SRC_DIR	=	srcs/
-SRC		= 	main.c			\
-			init.c			\
-			philo.c			\
-			ft_superatoi.c	\
-			utils.c			\
+SRC		= 	main.c					\
+			init.c					\
+			philo.c					\
+			ft_superatoi.c			\
+			utils.c					\
 
 OBJ_DIR	=	obj/
 OBJ		=	$(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
 CC		=	cc
-CFLAGS	=	-Iincludes -pthread -Wall -Wextra -Werror -fsanitize=thread
+CFLAGS	=	-Iincludes -pthread -Wall -Wextra -Werror
 RM		=	rm -f
 
-$(OBJ_DIR)%.o:	$(SRC_DIR)%.c
+$(OBJ_DIR)%.o:	$(SRC_DIR)%.c $(INC)
 					@mkdir -p $(@D)
 					$(CC) $(CFLAGS) -c $< -o $@
 
